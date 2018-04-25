@@ -1,0 +1,22 @@
+.comment-list {
+}
+
+.comment-info {
+
+}
+
+.comment-info .c-ts{
+    color: #bcbcbc;
+    font-size: 0.5rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
+}
+
+.comment-info .name{
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.comment-text {
+    font-size: 0.8rem;
+}
