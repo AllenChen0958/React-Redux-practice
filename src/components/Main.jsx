@@ -71,7 +71,7 @@ export default class Main extends React.Component {
                                                 <NavLink tag={Link} to='/forecast'>Forecast</NavLink>
                                             </NavItem>
                                         </Nav>
-                                        <div className='search mr-md-auto ml-auto'>
+                                        <div className='search ml-auto'>
                                             <Input className='ml-auto ' type='text' placeholder='Search' onKeyPress={this.handleSearchKeyPress} ></Input>{
                                                 this.state.searchText &&
                                                 <i className='navbar-text fa fa-times' onClick={this.handleClearSearch}></i>

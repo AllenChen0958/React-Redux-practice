@@ -1,4 +1,4 @@
-# Lab07 - Redux Weathermood Post and Comment
+# Lab06 - Redux Weathermood Post and Comment
 
 
 ## Objective
