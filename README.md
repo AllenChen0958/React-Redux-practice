@@ -3,6 +3,8 @@
 
 ## Objective
 Implement post and create comment using redux.
+<br/>
+Hint: You can refer to the project "lecture-weathermood-redux"
 
 ## Grading
 1. (10%) Readme <br/>

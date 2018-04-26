@@ -29,7 +29,7 @@ export default class CommentList extends React.Component {
         let children = (
             <div></div>
         );
-        if (comments.length) {
+        if (comments) {
             children = comments.map(c => (
                 <ListGroupItem key={c.id} action>
                     <div className='comment-item d-flex flex-column' >
