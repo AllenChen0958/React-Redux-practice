@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
     BrowserRouter as Router,
     Route,
@@ -24,14 +25,25 @@ import Today from 'components/Today.jsx';
 import Forecast from 'components/Forecast.jsx';
 import {unit, weather, weatherForm, forecast} from 'states/weather-reducers.js';
 
-import './Main.css';
+import {connect} from 'react-redux';
+import {toogleNavbar} from 'states/main-action.js'
+import {searchText} from 'states/post-actions'
 
-export default class Main extends React.Component {
+import './Main.css';
+import {main} from 'states/main-reducer.js';
+
+export class Main extends React.Component {
+    static propTypes={
+        // searchText: propTypes.string,
+        navbarToggle: PropTypes.bool,
+        store: PropTypes.object,
+    };
+
     constructor(props) {
         super(props);
 
         this.state = {
-            navbarToggle: false,
+            // navbarToggle: false,
             searchText: ''
         };
         this.store = null;
@@ -48,7 +60,8 @@ export default class Main extends React.Component {
             unit,
             weather,
             weatherForm,
-            forecast
+            forecast,
+            main
         }), composeEnhancers(applyMiddleware(thunkMiddleware/*, loggerMiddleware*/)));
     }
 
@@ -62,7 +75,7 @@ export default class Main extends React.Component {
                                 <Navbar color='faded' light expand="md">
                                     <NavbarToggler onClick={this.handleNavbarToggle}/>
                                     <NavbarBrand className='text-info' href="/">WeatherMood</NavbarBrand>
-                                    <Collapse isOpen={this.state.navbarToggle} navbar>
+                                    <Collapse isOpen={this.props.navbarToggle} navbar>
                                         <Nav navbar>
                                             <NavItem>
                                                 <NavLink tag={Link} to='/'>Today</NavLink>
@@ -73,7 +86,7 @@ export default class Main extends React.Component {
                                         </Nav>
                                         <div className='search ml-auto'>
                                             <Input className='ml-auto ' type='text' placeholder='Search' onKeyPress={this.handleSearchKeyPress} ></Input>{
-                                                this.state.searchText &&
+                                                this.props.searchText &&
                                                 <i className='navbar-text fa fa-times' onClick={this.handleClearSearch}></i>
                                             }
                                         </div>
@@ -83,7 +96,7 @@ export default class Main extends React.Component {
                         </div>
 
                         <Route exact path="/" render={() => (
-                            <Today searchText={this.state.searchText} />
+                            <Today searchText={this.props.searchText} />
                         )}/>
                         <Route exact path="/forecast" render={() => (
                             <Forecast />
@@ -98,18 +111,20 @@ export default class Main extends React.Component {
     }
 
     handleNavbarToggle() {
-        this.setState((prevState, props) => ({
-            navbarToggle: !prevState.navbarToggle
-        }));
+        // this.setState((prevState, props) => ({
+        //     navbarToggle: !prevState.navbarToggle
+        // }));
+        this.props.dispatch(toogleNavbar());
     }
 
     handleSearchKeyPress(e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13){
-            this.setState({
-                searchText: e.target.value
-            });
-        }
+        // var keyCode = e.keyCode || e.which;
+        // if (keyCode === 13){
+        //     this.setState({
+        //         searchText: e.target.value
+        //     });
+        // }
+
     }
 
     handleClearSearch() {
@@ -119,3 +134,9 @@ export default class Main extends React.Component {
         this.searchEl.value = '';
     }
 }
+
+export default connect(state=>({
+    ...state.main,
+    // searchText: <state></state>.searchText,
+}))(Main);
+
