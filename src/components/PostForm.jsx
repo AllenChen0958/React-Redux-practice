@@ -12,22 +12,21 @@ import {
 
 import {getMoodIcon} from 'utilities/weather.js';
 
+import {connect} from 'react-redux';
+import {createPost, setMood, setInputFormValue, setInputDanger, toggleMood, setMoodToggle} from 'states/post-actions.js'
+
 import './PostForm.css';
 
-export default class PostForm extends React.Component {
+export class PostForm extends React.Component {
     static propTypes = {
-        onPost: PropTypes.func
+        inputFormValue: PropTypes.string,
+        inputDanger: PropTypes.bool,
+        moodToggle: PropTypes.bool,
+        mood: PropTypes.string
     };
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            inputValue: props.city,
-            inputDanger: false,
-            moodToggle: false,
-            mood: 'na'
-        };
         this.inputEl = null;
         this.moodToggleEl = null;
 
@@ -39,12 +38,12 @@ export default class PostForm extends React.Component {
     }
 
     render() {
-        const {inputValue, moodToggle, mood} = this.state;
-        const inputDanger = this.state.inputDanger ? 'has-danger' : '';
+        const {inputFormValue, moodToggle, mood, inputDanger} = this.props;
+        const isInputDanger = inputDanger ? 'has-danger' : '';
 
         return (
             <div className='post-form'>
-                <Alert color='info' className={`d-flex flex-column flex-sm-row justify-content-center ${inputDanger}`}>
+                <Alert color='info' className={`d-flex flex-column flex-sm-row justify-content-center`}>
                     <div className='mood align-self-start'>
                         <ButtonDropdown type='buttom' isOpen={moodToggle} toggle={this.handleMoodToggle}>
                             <DropdownToggle className='mood-toggle' type='button' caret color="secondary">
@@ -63,7 +62,7 @@ export default class PostForm extends React.Component {
                             </DropdownMenu>
                         </ButtonDropdown>
                     </div>
-                    <Input className='input' type='textarea' value={this.state.inputValue} onChange={this.handleInputChange} placeholder="What's on your mind?"></Input>
+                    <Input className={`input ${isInputDanger}`} type='textarea' value={this.props.inputFormValue} onChange={this.handleInputChange} placeholder="What's on your mind?"></Input>
                     <Button className='btn-post align-self-end' color="info" onClick={this.handlePost}>Post</Button>
                 </Alert>
             </div>
@@ -71,37 +70,41 @@ export default class PostForm extends React.Component {
     }
 
     handleDropdownSelect(mood) {
-        this.setState({mood: mood});
+        // this.setState({mood: mood});
+        this.props.dispatch(setMood(mood));
     }
 
     handleInputChange(e) {
         const text = e.target.value
-        this.setState({inputValue: text});
+        // this.setState({inputValue: text});
+        this.props.dispatch(setInputFormValue(text))
         if (text) {
-            this.setState({inputDanger: false});
+            // this.setState({inputDanger: false});
+            this.props.dispatch(setInputDanger(false));
         }
     }
 
     handleMoodToggle(e) {
-        this.setState((prevState, props) => ({
-            moodToggle: !prevState.moodToggle
-        }));
+        this.props.dispatch(toggleMood());
     }
 
     handlePost() {
-        if (this.state.mood === 'na') {
-            this.setState({moodToggle: true});
+        if (this.props.mood === 'na') {
+            this.props.dispatch(setMoodToggle(true));
             return;
         }
-        if (!this.state.inputValue) {
-            this.setState({inputDanger: true});
+        if (!this.props.inputFormValue) {
+            this.props.dispatch(setInputDanger(true))
             return;
         }
-
-        this.props.onPost(this.state.mood, this.state.inputValue);
-        this.setState({
-            inputValue: '',
-            mood: 'na'
-        });
+        this.props.dispatch(createPost(this.props.mood, this.props.inputFormValue));
+        this.props.dispatch(setInputFormValue(""));
+        this.props.dispatch(setMood("na"));
     }
 }
+
+export default connect(state=>{
+    return {
+        ...state.postForm,
+    };
+})(PostForm);

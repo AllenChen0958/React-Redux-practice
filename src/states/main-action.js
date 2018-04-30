@@ -1,4 +1,4 @@
-export function toogleNavbar () {
+export function toggleNavbar () {
     return {
         type: "@MAIN/TOGGLE_NAVBAR"
     };

@@ -24,6 +24,11 @@
     margin: 0 0 0.5rem 0;
 }
 
+.has-danger{
+    border-color: #f20000 !important;
+    border-width: 0.05rem !important;
+}
+
 @media (min-width: 576px) {
     .post-form .mood {
         margin: 0 0.5rem 0 0;

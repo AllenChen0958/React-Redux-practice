@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // TODO replace the key with yours
 const key = '36978c6550efee0e27e50850cc57adda';
-
 export function getWeatherGroup(code) {
     let group = 'na';
     if (200 <= code && code < 300) {
