@@ -4,16 +4,19 @@ import {
     Tooltip,
     Collapse
 } from 'reactstrap';
+import {connect} from 'react-redux';
+
 import moment from 'moment';
 import CommentForm from 'components/CommentForm.jsx'
 import CommentList from 'components/CommentList.jsx'
 
 import {getMoodIcon} from 'utilities/weather.js';
-import {createVote} from 'api/posts.js';
+// import {createVote} from 'api/posts.js';
+import {setTooltipToggle, toggleTooltip, setCommentOpen, toggleCommentOpen, createVote} from 'states/post-actions.js';
 
 import './PostItem.css';
 
-export default class PostItem extends React.Component {
+export class PostItem extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         mood: PropTypes.string,
@@ -26,34 +29,22 @@ export default class PostItem extends React.Component {
         snowVotes: PropTypes.number,
         windyVotes: PropTypes.number,
         comments:PropTypes.array,
-        onVote: PropTypes.func,
-        onComment: PropTypes.func
+        tooltipOpen: PropTypes.bool,
+        commentOpen: PropTypes.bool
     };
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            tooltipOpen: false,
-            commentOpen: false
-        };
 
         this.handleClick = this.handleClick.bind(this);
         this.handleTooltipToggle = this.handleTooltipToggle.bind(this);
-        this.handleClearVote = this.handleClearVote.bind(this);
-        this.handleCloudsVote = this.handleCloudsVote.bind(this);
-        this.handleDrizzleVote = this.handleDrizzleVote.bind(this);
-        this.handleRainVote = this.handleRainVote.bind(this);
-        this.handleThunderVote = this.handleThunderVote.bind(this);
-        this.handleSnowVote = this.handleSnowVote.bind(this);
-        this.handleWindyVote = this.handleWindyVote.bind(this);
-        this.handleCreateComment = this.handleCreateComment.bind(this);
+        this.handleVote = this.handleVote.bind(this);
         this.toggleComment = this.toggleComment.bind(this);
     }
 
     render() {
-        const {id, mood, text, ts, clearVotes, cloudsVotes, drizzleVotes, rainVotes, thunderVotes, snowVotes, windyVotes, comments} = this.props;
-        const {tooltipOpen, commentOpen} = this.state;
+        const {id, mood, text, ts, clearVotes, cloudsVotes, drizzleVotes, rainVotes, thunderVotes, snowVotes, windyVotes, comments, tooltipOpen, commentOpen} = this.props;
 
         return (
             <div className='post-item d-flex flex-column' >
@@ -82,18 +73,18 @@ export default class PostItem extends React.Component {
                     </div>
                 </div>
                 <Tooltip placement='left' isOpen={tooltipOpen} autohide={false} target={`post-item-vote-${id}`} toggle={this.handleTooltipToggle}>
-                    <i className={`vote-tooltip ${getMoodIcon('Clear')}`} onClick={this.handleClearVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Clouds')}`} onClick={this.handleCloudsVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Drizzle')}`} onClick={this.handleDrizzleVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Rain')}`} onClick={this.handleRainVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Thunder')}`} onClick={this.handleThunderVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Snow')}`} onClick={this.handleSnowVote}></i>&nbsp;
-                    <i className={`vote-tooltip ${getMoodIcon('Windy')}`} onClick={this.handleWindyVote}></i>
+                    <i className={`vote-tooltip ${getMoodIcon('Clear')}`} onClick={()=>this.handleVote("Clear")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Clouds')}`} onClick={()=>this.handleVote("Clouds")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Drizzle')}`} onClick={()=>this.handleVote("Drizzle")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Rain')}`} onClick={()=>this.handleVote("Rain")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Thunder')}`} onClick={()=>this.handleVote("Thunder")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Snow')}`} onClick={()=>this.handleVote("Snow")}></i>&nbsp;
+                    <i className={`vote-tooltip ${getMoodIcon('Windy')}`} onClick={()=>this.handleVote("Windy")}></i>
                 </Tooltip>
 
                 <div className='comment-area'>
-                    <Collapse isOpen={this.state.commentOpen}>
-                        <CommentForm onComment={this.handleCreateComment}/>
+                    <Collapse isOpen={this.props.commentOpen}>
+                        <CommentForm id={this.props.id}/>
                         <CommentList comments={comments}/>
                     </Collapse>
                 </div>
@@ -102,73 +93,31 @@ export default class PostItem extends React.Component {
     }
 
     handleClick() {
-        this.setState({
-          tooltipOpen: !this.state.tooltipOpen
-        });
+
+        this.props.dispatch(setTooltipToggle(this.props.id, true));
+    }
+    
+    handleVote(vote) {
+        this.props.dispatch(createVote(this.props.id, vote));
+        this.props.dispatch(setTooltipToggle(this.props.id, false));
     }
 
     handleTooltipToggle() {
-        this.setState((prevState, props) => ({
-            tooltipOpen: !prevState.tooltipOpen
-        }));
+        this.props.dispatch(toggleTooltip(this.props.id));
     }
 
-    handleClearVote() {
-        this.props.onVote(this.props.id, 'Clear');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleCloudsVote() {
-        this.props.onVote(this.props.id, 'Clouds');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleDrizzleVote() {
-        this.props.onVote(this.props.id, 'Drizzle');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleRainVote() {
-        this.props.onVote(this.props.id, 'Rain');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleThunderVote() {
-        this.props.onVote(this.props.id, 'Thunder');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleSnowVote() {
-        this.props.onVote(this.props.id, 'Snow');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleWindyVote() {
-        this.props.onVote(this.props.id, 'Windy');
-        this.setState({
-          tooltipOpen: false
-        });
-    }
-
-    handleCreateComment(name, text) {
-        this.props.onComment(this.props.id, name, text);
-    }
 
     toggleComment() {
-        this.setState({ commentOpen: !this.state.commentOpen});
+        this.props.dispatch(toggleCommentOpen(this.props.id));
     }
 
 
 }
+
+
+export default connect((state, ownProps)=>{
+    return {
+        tooltipOpen: state.postItem.tooltipOpenGroup[ownProps.id]? true:false,
+        commentOpen: state.postItem.commentOpenGroup[ownProps.id]? true:false,
+    }
+})(PostItem);

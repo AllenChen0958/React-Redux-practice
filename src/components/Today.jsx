@@ -30,14 +30,14 @@ class Today extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            postLoading: false,
-            posts: []
-        };
+        // this.state = {
+        //     postLoading: false,
+        //     posts: []
+        // };
 
         // this.handleCreatePost = this.handleCreatePost.bind(this);
-        this.handleCreateVote = this.handleCreateVote.bind(this);
-        this.handleCreateComment = this.handleCreateComment.bind(this);
+        // this.handleCreateVote = this.handleCreateVote.bind(this);
+        // this.handleCreateComment = this.handleCreateComment.bind(this);
     }
 
     componentDidMount() {
@@ -73,7 +73,7 @@ class Today extends React.Component {
                 </div>
                 <div className='posts'>
                     <PostForm/>
-                    <PostList posts={posts} onVote={this.handleCreateVote} onComment={this.handleCreateComment} />{
+                    <PostList posts={posts}/>{
                         postLoading &&
                         <Alert color='warning' className='loading'>Loading...</Alert>
                     }
@@ -82,50 +82,6 @@ class Today extends React.Component {
         );
     }
 
-    listPosts(searchText) {
-        // // console.log(searchText);
-        // this.setState({
-        //     postLoading: true
-        // }, () => {
-        //     listPosts(searchText).then(posts => {
-        //         this.setState({
-        //             posts,
-        //             postLoading: false
-        //         });
-        //     }).catch(err => {
-        //         console.error('Error listing posts', err);
-
-        //         this.setState({
-        //             posts: [],
-        //             postLoading: false
-        //         });
-        //     });
-        // });
-    }
-
-    // handleCreatePost(mood, text) {
-    //     createPost(mood, text).then(() => {
-    //         this.listPosts(this.props.searchText);
-    //     }).catch(err => {
-    //         console.error('Error creating posts', err);
-    //     });
-    // }
-
-    handleCreateVote(id, mood) {
-        createVote(id, mood).then(() => {
-            this.listPosts(this.props.searchText);
-        }).catch(err => {
-            console.error('Error creating vote', err);
-        });
-    }
-
-    handleCreateComment(id, name, text) {
-        createComment(id, name, text).then(() => {
-            this.listPosts(this.props.searchText);
-        }).catch(err => {
-            console.error('Error creating comment', err);
-        });
-    }
 }
 
 

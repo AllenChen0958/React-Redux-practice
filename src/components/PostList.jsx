@@ -12,8 +12,6 @@ export default class PostList extends React.Component {
     static propTypes = {
         posts: PropTypes.array,
         filter: PropTypes.string,
-        onVote: PropTypes.func,
-        onComment: PropTypes.func
     };
 
     constructor(props) {
@@ -21,9 +19,6 @@ export default class PostList extends React.Component {
 
         this.state = {
         };
-
-        this.handleVote = this.handleVote.bind(this);
-        this.handleComment = this.handleComment.bind(this);
     }
 
     render() {
@@ -37,7 +32,7 @@ export default class PostList extends React.Component {
         if (posts.length) {
             children = posts.map(p => (
                 <ListGroupItem key={p.id} action>
-                    <PostItem {...p} onVote={this.handleVote} onComment={this.handleComment} />
+                    <PostItem {...p} />
                 </ListGroupItem>
             ));
         }
@@ -48,12 +43,4 @@ export default class PostList extends React.Component {
             </div>
         );
     }
-
-    handleVote(id, mood) {
-        this.props.onVote(id, mood);
-    }
-    handleComment(id, name, text) {
-        this.props.onComment(id, name, text);
-    }
-
 }

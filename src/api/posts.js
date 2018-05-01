@@ -60,8 +60,7 @@ function _createPost(mood, text) {
 
 export function createVote(id, mood) {
     return new Promise((resolve, reject) => {
-        _createVote(id, mood);
-        resolve();
+        resolve(_createVote(id, mood));
     });
 }
 
@@ -74,6 +73,8 @@ function _createVote(id, mood) {
         return p;
     });
     localStorage.setItem(postKey, JSON.stringify(posts));
+    const newPost = posts.find(p => p.id === id);
+    return newPost;
 }
 
 
@@ -102,4 +103,6 @@ function _createComment(id, name, text){
         return p;
     });
     localStorage.setItem(postKey, JSON.stringify(posts));
+    const newPost = posts.find(p => p.id === id);
+    return newPost;
 }
